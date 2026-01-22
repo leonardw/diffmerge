@@ -162,6 +162,10 @@ int gui_app::OnExit(void)
 
 bool gui_app::OnInit(void)
 {
+	wxString suppressSizerChecks;
+	if (!wxGetEnv(_T("WXSUPPRESS_SIZER_FLAGS_CHECK"), &suppressSizerChecks) || suppressSizerChecks.IsEmpty())
+		wxSetEnv(_T("WXSUPPRESS_SIZER_FLAGS_CHECK"), _T("TRUE"));
+
 	wxLog::SetTimestamp(_T(""));	// turn off printing of timestamp in log messages (primarily for gtk)
 #ifdef DEBUG
 	// TODO see if we can move these AddTraceMask's to gui_app::gui_app()
@@ -794,4 +798,3 @@ void gui_app::onEndSession(wxCloseEvent & /*e*/)
 	gpFrameFactory->closeAllFrames(true);
 	wxLogTrace(wxTRACE_Messages, _T("gui_app:onEndSession() end..."));
 }
-

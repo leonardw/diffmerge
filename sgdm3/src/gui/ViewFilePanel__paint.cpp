@@ -504,6 +504,17 @@ void ViewFilePanel::_drawCaret(wxDC & dc, int x, int y)
 	dc.SetPen(wxNullPen);
 }
 
+static void _fillTextSpanBackground(wxDC & dc, wxCoord x, wxCoord y, wxCoord w, int rowHeight, const wxColour & bg)
+{
+	if ((w <= 0) || (rowHeight <= 0))
+		return;
+
+	// Fill the entire row height so whitespace doesn't leave visible gaps.
+	dc.SetPen(wxNullPen);
+	dc.SetBrush(wxBrush(bg));
+	dc.DrawRectangle(x, y, w, rowHeight);
+}
+
 void ViewFilePanel::_drawString(wxDC & dc,
 								const wxChar * sz, long len,
 								bool bDisplayInvisibles, int cColTabWidth,
@@ -531,6 +542,7 @@ void ViewFilePanel::_drawString(wxDC & dc,
 		return;
 	}
 	
+	int yPixelsPerRow = getPixelsPerRow();
 	bool bPanelWithFocus = (m_kPanel == m_pViewFile->getPanelWithFocus());
 
 	wxCoord wText,hText;
@@ -548,6 +560,7 @@ void ViewFilePanel::_drawString(wxDC & dc,
 		// overlay the caret (so that the character
 		// background doesn't erase it).
 
+		_fillTextSpanBackground(dc,xDraw,y,wText,yPixelsPerRow,clrBg);
 		dc.SetTextForeground(clrFg);
 		dc.SetTextBackground(clrBg);
 		UTIL_PERF_START_CLOCK(sszKey_draw_text);
@@ -578,6 +591,7 @@ void ViewFilePanel::_drawString(wxDC & dc,
 		// our span does not cross/intersect the selection,
 		// so we can just draw it normally.
 		
+		_fillTextSpanBackground(dc,xDraw,y,wText,yPixelsPerRow,clrBg);
 		dc.SetTextForeground(clrFg);
 		dc.SetTextBackground(clrBg);
 		UTIL_PERF_START_CLOCK(sszKey_draw_text);
@@ -610,14 +624,15 @@ void ViewFilePanel::_drawString(wxDC & dc,
 		int lenPart1 = m_vfcSelection0.getCol() - colStart;
 		wxString strPart1 = wxString(strTemp.wc_str(),lenPart1);
 
+		UTIL_PERF_START_CLOCK(sszKey_get_text_ext);
+		dc.GetTextExtent(strPart1,&wText,&hText);
+		UTIL_PERF_STOP_CLOCK(sszKey_get_text_ext);
+		_fillTextSpanBackground(dc,xDraw,y,wText,yPixelsPerRow,clrBg);
 		dc.SetTextForeground(clrFg);
 		dc.SetTextBackground(clrBg);
 		UTIL_PERF_START_CLOCK(sszKey_draw_text);
 		dc.DrawText(strPart1,xDraw,y);
 		UTIL_PERF_STOP_CLOCK(sszKey_draw_text);
-		UTIL_PERF_START_CLOCK(sszKey_get_text_ext);
-		dc.GetTextExtent(strPart1,&wText,&hText);
-		UTIL_PERF_STOP_CLOCK(sszKey_get_text_ext);
 		xDraw += wText;
 
 		wxString strPart2 = wxString(strTemp.wc_str()+lenPart1);
@@ -643,6 +658,10 @@ void ViewFilePanel::_drawString(wxDC & dc,
 		case  0:		// the selection ends exactly at the end of our span.
 			// draw the rest of the string using the selection highlight coloring.
 
+			UTIL_PERF_START_CLOCK(sszKey_get_text_ext);
+			dc.GetTextExtent(strTemp,&wText,&hText);
+			UTIL_PERF_STOP_CLOCK(sszKey_get_text_ext);
+			_fillTextSpanBackground(dc,xDraw,y,wText,yPixelsPerRow,colorSelectionBg);
 			UTIL_PERF_START_CLOCK(sszKey_draw_text);
 			dc.DrawText(strTemp,xDraw,y);
 			UTIL_PERF_STOP_CLOCK(sszKey_draw_text);
@@ -675,6 +694,10 @@ void ViewFilePanel::_drawString(wxDC & dc,
 
 			int lenPart1 = m_vfcSelection1.getCol() - colStart;
 			wxString strPart1 = wxString(strTemp.wc_str(),lenPart1);
+			UTIL_PERF_START_CLOCK(sszKey_get_text_ext);
+			dc.GetTextExtent(strPart1,&wText,&hText);
+			UTIL_PERF_STOP_CLOCK(sszKey_get_text_ext);
+			_fillTextSpanBackground(dc,xDraw,y,wText,yPixelsPerRow,colorSelectionBg);
 			UTIL_PERF_START_CLOCK(sszKey_draw_text);
 			dc.DrawText(strPart1,xDraw,y);
 			UTIL_PERF_STOP_CLOCK(sszKey_draw_text);
@@ -687,9 +710,6 @@ void ViewFilePanel::_drawString(wxDC & dc,
 			if ((m_vfcCaret.compare(m_vfcSelection0) == 0) && (m_vfcCaret.compare(row,colStart) == 0))
 				_drawCaret(dc,xDraw,y);
 
-			UTIL_PERF_START_CLOCK(sszKey_get_text_ext);
-			dc.GetTextExtent(strPart1,&wText,&hText);
-			UTIL_PERF_STOP_CLOCK(sszKey_get_text_ext);
 			xDraw += wText;
 
 			wxString strPart2 = wxString(strTemp.wc_str()+lenPart1);
@@ -700,6 +720,10 @@ void ViewFilePanel::_drawString(wxDC & dc,
 
 	// draw tail portion in normal colors
 
+	UTIL_PERF_START_CLOCK(sszKey_get_text_ext);
+	dc.GetTextExtent(strTemp,&wText,&hText);
+	UTIL_PERF_STOP_CLOCK(sszKey_get_text_ext);
+	_fillTextSpanBackground(dc,xDraw,y,wText,yPixelsPerRow,clrBg);
 	dc.SetTextForeground(clrFg);
 	dc.SetTextBackground(clrBg);
 	UTIL_PERF_START_CLOCK(sszKey_draw_text);
