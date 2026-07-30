@@ -16,7 +16,7 @@ MODE:=Release
 ## set ARCH, ARCH_PACKAGE
 include ../src/Config/Arch.$(OS_NAME).inc
 
-VERSION:=3.2.6
+VERSION:=3.2.11
 
 ##################################################################
 ## the name of the archive we downloaded.

@@ -18,7 +18,7 @@ include version.inc
 ## set ARCH, ARCH_PACKAGE
 include src/Config/Arch.$(OS_NAME).inc
 
-WXWIDGETS_VERSION:=3.2.6
+WXWIDGETS_VERSION:=3.2.11
 
 $(info Building $(BUILD_MAJOR).$(BUILD_MINOR).$(BUILD_REVISION).$(BUILD_BUILDNUM) : $(BUILD_BUILDLABEL) : $(BUILD_CSID))
 
