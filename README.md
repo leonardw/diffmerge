@@ -6,9 +6,9 @@ Example command lines to build:
 ```
 cd sgdm3
 
-# Mac
-ARCH=arm64 make -f Makefile.Apple
-ARCH=x86_64 make -f Makefile.Apple
+# Mac; builds bespoke version <maj>.<min>.<rev>b<buildnum>
+BUILDNUM=<buildnum> ARCH=arm64 make -f Makefile.Apple
+BUILDNUM=<buildnum> ARCH=x86_64 make -f Makefile.Apple
 
 # Windows
 TARGET_PLATFORM=x64 make -f Makefile.Windows

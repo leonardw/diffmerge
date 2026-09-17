@@ -47,7 +47,7 @@ AboutBox::AboutBox(wxFrame * pFrameParent,
 			wxBoxSizer * vSizerText = new wxBoxSizer(wxVERTICAL);
 			{
 				wxString strBuildVersion = build_version_string();
-				
+
 				vSizerText->Add( new wxStaticText(this,wxID_ANY, VER_APP_TITLE),   FIX, wxALL, M);
 				vSizerText->Add( new wxStaticText(this,wxID_ANY, strBuildVersion), FIX, wxALL, M);
 				vSizerText->Add( new wxStaticText(this,wxID_ANY, VER_COPYRIGHT),   FIX, wxALL, M);
@@ -69,7 +69,7 @@ AboutBox::AboutBox(wxFrame * pFrameParent,
 			hSizerButtonBar->Add( pButtonClose, FIX, 0,0);	// can't use CreateButtonSizer() because we have a different label for OK button
 		}
 		vSizerTop->Add(hSizerButtonBar,FIX,wxGROW|wxALL,M);
-		
+
 	}
 	SetSizer(vSizerTop);
 	vSizerTop->SetSizeHints(this);
@@ -96,10 +96,10 @@ AboutBox::AboutBox(wxFrame * pFrameParent,
 		strBuildLabel = _T("");						// then we don't want to include it in the version number line.
 
 	strCSID.Truncate(10);	// just show the first 10 digits of the veracity changeset id.
-	
-	wxString strVersion = wxString::Format(_("Version %d.%d.%d (%d:%s) [%s] %s"),
+
+	wxString strVersion = wxString::Format(_("Version %d.%d.%db%d [%s] %s"),
 										   VER_MAJOR_VERSION,VER_MINOR_VERSION,VER_MINOR_SUBVERSION,
-										   VER_BUILD_NUMBER, strCSID.wc_str(),
+										   VER_BUILD_NUMBER,
 										   strArchPackage.wc_str(),
 										   strBuildLabel.wc_str());
 
